@@ -1,0 +1,86 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application             rhoPimpleFoam;
+
+startFrom               latestTime;
+
+startTime               0;
+
+stopAt                  endTime;
+
+endTime                 1;
+
+deltaT                  2e-10;
+
+writeControl            adjustableRunTime;
+
+writeInterval           1e-3;
+
+purgeWrite              10;
+
+writeFormat             ascii;
+
+writePrecision          6;
+
+writeCompression        off;
+
+timeFormat              general;
+
+timePrecision           6;
+
+runTimeModifiable       true;
+
+adjustTimeStep          yes;
+
+maxCo                   0.5;
+
+maxDeltaT               1.0;
+
+pressArtDiff            false; 
+convArtDiff             false; 
+
+ducLevelPress           0.00;
+ducLevelConv            0.05;
+epsilon                 4.81636e3; // U_inf^2 / L
+kp                      0.25;
+ku                      0.75;
+rm                      0.2;
+minfty                  0.04;
+
+
+functions
+{
+    minMax
+    {
+        type          fieldMinMax;
+        libs          (fieldFunctionObjects);
+        writeControl  timeStep; //writeTime;
+        fields        (U);
+    }
+    yPlus
+    {
+        type            yPlus;
+        libs            (fieldFunctionObjects);
+        patches         (fixedWall);
+        writeControl    writeTime;
+    }
+    #includeFunc "writeCellCentres"
+    #includeFunc "wallShearStress"
+}
+
+// ************************************************************************* //
